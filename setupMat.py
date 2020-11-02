@@ -1,10 +1,8 @@
 import json
-from urllib.parse import unquote_plus
 import pickle
 import os
 import time as T
 import logging
-from collections import Counter
 import sys
 import numpy as np
 import scipy.sparse as sp
