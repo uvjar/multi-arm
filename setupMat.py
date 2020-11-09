@@ -154,9 +154,9 @@ def main():
                     with open("users.txt", "a") as user_file:
                         user_file.write(str(user_idx)+" ")
                     with open("items.txt", "a") as item_file:
-                        user_file.write(str(url_idx)+" ")
+                        item_file.write(str(url_idx)+" ")
                     with open("ratings.txt", "a") as rating_file:
-                        user_file.write(str(d['activeTime'])+" ")                                                
+                        rating_file.write(str(d['activeTime'])+" ")                                                
         os.system('rm '+filename)
         print('remove '+filename)
     print("finish building matrix")
