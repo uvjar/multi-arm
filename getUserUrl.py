@@ -133,7 +133,7 @@ def main():
         print('remove '+filename)
     print("finish reading user set and item set")
                
-    logging.debug("total amount of subscribing users: "+str(len(subUserSet)))
+    #logging.debug("total amount of subscribing users: "+str(len(subUserSet)))
     print("total amount of subscribing users: "+str(len(subUserSet)))
     with open('subUserSet.pkl', 'wb') as f:
         pickle.dump(subUserSet, f)

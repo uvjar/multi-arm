@@ -132,8 +132,8 @@ def main():
     url_to_idx = dict([(url, i) for i, url in enumerate(idx_to_url)])
     idx_to_user=list(subUserSet);
     user_to_idx = dict([(usr, i) for i, usr in enumerate(idx_to_user)])
-    usr_url_matrix = np.zeros((len(idx_to_user),len(idx_to_url)))
-    print(usr_url_matrix.shape)
+    #usr_url_matrix = np.zeros((len(idx_to_user),len(idx_to_url)))
+    #print(usr_url_matrix.shape)
 
     for filename in files:
         os.system('tar -zxvf '+path+'three_month.tar.gz '+filename)
@@ -142,21 +142,27 @@ def main():
         for line in open(f):
             data=line.rstrip()
             d=json.loads(data)
-            if d['url'] == 'http://adressa.no':
-                    continue
-            elif 'ece' not in d['url'] and 'html' not in d['url']:
-                    continue
-            if 'activeTime' in d.keys():
-                if d['userId'] in subUserSet and d['url'] in urlSet:
+            if 'activeTime' in d.keys() and d['activeTime']>0:
+                if d['userId'] in subUserSet：
+                    if d['url'] == 'http://adressa.no':
+                            continue
+                    elif 'ece' not in d['url'] and 'html' not in d['url']:
+                            continue
                     user_idx = user_to_idx[d['userId']]
                     url_idx=url_to_idx[d['url']]
-                    usr_url_matrix[user_idx,url_idx]=d['activeTime']
+                    #usr_url_matrix[user_idx,url_idx]=d['activeTime']
+                    with open("users.txt", "a") as user_file:
+                        user_file.write(str(user_idx)+" ")
+                    with open("items.txt", "a") as item_file:
+                        user_file.write(str(url_idx)+" ")
+                    with open("ratings.txt", "a") as rating_file:
+                        user_file.write(str(d['activeTime'])+" ")                                                
         os.system('rm '+filename)
         print('remove '+filename)
     print("finish building matrix")
-    usr_url_matrix_csr = sp.csr_matrix(usr_url_matrix)
-    np.save("user_url_mat.npy",usr_url_matrix_csr)
-
+    
+    # usr_url_matrix_csr = sp.csr_matrix(usr_url_matrix)
+    # np.save("user_url_mat.npy",usr_url_matrix_csr)
     # url_usr_matrix = usr_url_matrix.transpose()
     # url_usr_matrix_csr = sp.csr_matrix(url_usr_matrix)
     # np.save("url_usr_mat.npy",url_usr_matrix_csr)
