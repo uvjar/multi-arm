@@ -128,9 +128,9 @@ def main():
 	            t = '20170'+str(month)+str(date)
 	            files.append(t)
 
-    idx_to_url=list(urlSet)
+    idx_to_url=list(urlSet);
     url_to_idx = dict([(url, i) for i, url in enumerate(idx_to_url)])
-    idx_to_user=list(subUserSet)
+    idx_to_user=list(subUserSet);
     user_to_idx = dict([(usr, i) for i, usr in enumerate(idx_to_user)])
     usr_url_matrix = np.zeros((len(idx_to_user),len(idx_to_url)))
     print(usr_url_matrix.shape)
