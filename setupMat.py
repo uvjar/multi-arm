@@ -147,7 +147,7 @@ def main():
             elif 'ece' not in d['url'] and 'html' not in d['url']:
                     continue
             if 'activeTime' in d.keys():
-                if d['userId'] in subUserSet && d['url'] in urlSet:
+                if d['userId'] in subUserSet and d['url'] in urlSet:
                     user_idx = user_to_idx[d['userId']]
                     url_idx=url_to_idx[d['url']]
                     usr_url_matrix[user_idx,url_idx]=d['activeTime']
