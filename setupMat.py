@@ -143,7 +143,7 @@ def main():
             data=line.rstrip()
             d=json.loads(data)
             if 'activeTime' in d.keys() and d['activeTime']>0:
-                if d['userId'] in subUserSet：
+                if d['userId'] in subUserSet:
                     if d['url'] == 'http://adressa.no':
                             continue
                     elif 'ece' not in d['url'] and 'html' not in d['url']:
@@ -160,7 +160,7 @@ def main():
         os.system('rm '+filename)
         print('remove '+filename)
     print("finish building matrix")
-    
+
     # usr_url_matrix_csr = sp.csr_matrix(usr_url_matrix)
     # np.save("user_url_mat.npy",usr_url_matrix_csr)
     # url_usr_matrix = usr_url_matrix.transpose()
