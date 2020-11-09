@@ -108,25 +108,25 @@ def normalizeActiveTime(userevt):
 
 
 def main():
-	subUserSet=set();urlSet=set()
-	urlSet = pickle.load(open('urlSet.pkl', 'rb'))#, encoding='utf-8'
-	print('urlSet loaded')
-	subUserSet = pickle.load(open('subUserSet.pkl', 'rb'))
-	print('subUserSet loaded')
+    subUserSet=set();urlSet=set()
+    urlSet = pickle.load(open('urlSet.pkl', 'rb'))#, encoding='utf-8'
+    print('urlSet loaded')
+    subUserSet = pickle.load(open('subUserSet.pkl', 'rb'))
+    print('subUserSet loaded')
 
-	files=[]
-	for month in [1,2,3]:
-	    for date in range(1,10):
-	        t='20170'+str(month)+'0'+str(date) 
-	        files.append(t)
-	    if month ==2:
-	        for date in range(10,29):
-	            t = '20170'+str(month)+str(date)
-	            files.append(t)      
-	    else:
-	        for date in range(10,32):
-	            t = '20170'+str(month)+str(date)
-	            files.append(t)
+    files=[]
+    for month in [1,2,3]:
+        for date in range(1,10):
+            t='20170'+str(month)+'0'+str(date) 
+            files.append(t)
+        if month ==2:
+            for date in range(10,29):
+                t = '20170'+str(month)+str(date)
+                files.append(t)      
+        else:
+            for date in range(10,32):
+                t = '20170'+str(month)+str(date)
+                files.append(t)
 
     idx_to_url=list(urlSet);
     url_to_idx = dict([(url, i) for i, url in enumerate(idx_to_url)])
@@ -136,30 +136,30 @@ def main():
     print(usr_url_matrix.shape)
 
     for filename in files:
-    	os.system('tar -zxvf '+path+'three_month.tar.gz '+filename)
-    	print('tar -zxvf '+path+'three_month.tar.gz '+filename)
-    	f=filename     
-	    for line in open(f):
-	        data=line.rstrip()
-	        d=json.loads(data)
-	        if d['url'] == 'http://adressa.no':
-	                continue
-	        elif 'ece' not in d['url'] and 'html' not in d['url']:
-	                continue
-	        if 'activeTime' in d.keys():
-		        if d['userId'] in subUserSet && d['url'] in urlSet:
-		            user_idx = user_to_idx[d['userId']]
-		        	url_idx=url_to_idx[d['url']]
-		        	usr_url_matrix[user_idx,url_idx]=d['activeTime']
-		os.system('rm '+filename)
-		print('remove '+filename)
-	print("finish building matrix")
-	usr_url_matrix_csr = sp.csr_matrix(usr_url_matrix)
-	np.save("user_url_mat.npy",usr_url_matrix_csr)
+        os.system('tar -zxvf '+path+'three_month.tar.gz '+filename)
+        print('tar -zxvf '+path+'three_month.tar.gz '+filename)
+        f=filename
+        for line in open(f):
+            data=line.rstrip()
+            d=json.loads(data)
+            if d['url'] == 'http://adressa.no':
+                    continue
+            elif 'ece' not in d['url'] and 'html' not in d['url']:
+                    continue
+            if 'activeTime' in d.keys():
+                if d['userId'] in subUserSet && d['url'] in urlSet:
+                    user_idx = user_to_idx[d['userId']]
+                    url_idx=url_to_idx[d['url']]
+                    usr_url_matrix[user_idx,url_idx]=d['activeTime']
+        os.system('rm '+filename)
+        print('remove '+filename)
+    print("finish building matrix")
+    usr_url_matrix_csr = sp.csr_matrix(usr_url_matrix)
+    np.save("user_url_mat.npy",usr_url_matrix_csr)
 
-	# url_usr_matrix = usr_url_matrix.transpose()
-	# url_usr_matrix_csr = sp.csr_matrix(url_usr_matrix)
-	# np.save("url_usr_mat.npy",url_usr_matrix_csr)
+    # url_usr_matrix = usr_url_matrix.transpose()
+    # url_usr_matrix_csr = sp.csr_matrix(url_usr_matrix)
+    # np.save("url_usr_mat.npy",url_usr_matrix_csr)
         
 if __name__ == "__main__":
     main()    
