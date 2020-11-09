@@ -157,9 +157,9 @@ def main():
 	usr_url_matrix_csr = sp.csr_matrix(usr_url_matrix)
 	np.save("user_url_mat.npy",usr_url_matrix_csr)
 
-	url_usr_matrix = usr_url_matrix.transpose()
-	url_usr_matrix_csr = sp.csr_matrix(url_usr_matrix)
-	np.save("url_usr_mat.npy",url_usr_matrix_csr)
+	# url_usr_matrix = usr_url_matrix.transpose()
+	# url_usr_matrix_csr = sp.csr_matrix(url_usr_matrix)
+	# np.save("url_usr_mat.npy",url_usr_matrix_csr)
         
 if __name__ == "__main__":
     main()    
