@@ -13,8 +13,8 @@ def main():
 		print("Got users... ", end=""); sys.stdout.flush()
 		f_ratings = np.load(path+"ratings.npy")
 		print("Got ratings... ", end=""); sys.stdout.flush()
-		f_movies = np.load(path+"movies.npy")
-		print("Got movies... ", end=""); sys.stdout.flush()
+		f_movies = np.load(path+"items.npy")
+		print("Got items... ", end=""); sys.stdout.flush()
 	else:
 		f_users = np.loadtxt(open(path+"users.txt", "r"), dtype=np.float32)
 		print("Got users... ", end=""); sys.stdout.flush()
@@ -22,9 +22,9 @@ def main():
 		f_ratings = np.loadtxt(open(path+"ratings.txt", "r"), dtype=np.float32)
 		print("Got ratings... ", end=""); sys.stdout.flush()
 		np.save(path+"ratings.npy",f_ratings)
-		f_movies = np.loadtxt(open(path+"movies.txt", "r"), dtype=np.float32)
-		print("Got movies... ", end=""); sys.stdout.flush()
-		np.save(path+"movies.npy",f_movies)
+		f_movies = np.loadtxt(open(path+"items.txt", "r"), dtype=np.float32)
+		print("Got items... ", end=""); sys.stdout.flush()
+		np.save(path+"items.npy",f_movies)
 
 	R=sp.coo_matrix((f_ratings, (f_users, f_movies)), dtype=np.float32);R=sp.csc_matrix(R)
 	R = sp.coo_matrix((f_ratings, (f_users, f_movies)), dtype=np.float32)
