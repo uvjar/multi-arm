@@ -11,7 +11,7 @@ def main():
 		f_users = np.load(path+"users.npy")
 		print("Got users... "+str(f_users.size)); sys.stdout.flush()
 		f_ratings = np.load(path+"ratings.npy")
-		print("Got ratings... "+str(ratings.size)); sys.stdout.flush()
+		print("Got ratings... "+str(f_ratings.size)); sys.stdout.flush()
 		f_items = np.load(path+"items.npy")
 		print("Got items... "+str(f_items.size)); sys.stdout.flush()
 	else:
