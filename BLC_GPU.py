@@ -69,28 +69,33 @@ B.seed = args.seed
 # Start parsing R
 if args.Rfromfiles:
 	print("Retrieving R from files... ", end=""); sys.stdout.flush()
-
-	if os.path.isfile("Data/users"+args.file+".npy"):
-	# if args.file == "_netflix":
-		f_users = np.load("Data/users"+args.file+".npy")
+	if os.path.isfile("users.npy"):
+		f_users = np.load("users.npy")
 		print("Got users... ", end=""); sys.stdout.flush()
-		f_ratings = np.load("Data/ratings"+args.file+".npy")
+		f_ratings = np.load("ratings.npy")
 		print("Got ratings... ", end=""); sys.stdout.flush()
-		f_movies = np.load("Data/movies"+args.file+".npy")
+		f_movies = np.load("movies.npy")
 		print("Got movies... ", end=""); sys.stdout.flush()
 	else:
-		f_users = np.loadtxt(open("Data/users"+args.file+".txt", "r"), dtype=np.float32)
+		f_users = np.loadtxt(open("users.txt", "r"), dtype=np.float32)
 		print("Got users... ", end=""); sys.stdout.flush()
-		np.save("Data/users"+args.file+".npy",f_users)
-		f_ratings = np.loadtxt(open("Data/ratings"+args.file+".txt", "r"), dtype=np.float32)
+		np.save("users.npy",f_users)
+		f_ratings = np.loadtxt(open("ratings.txt", "r"), dtype=np.float32)
 		print("Got ratings... ", end=""); sys.stdout.flush()
-		np.save("Data/ratings"+args.file+".npy",f_ratings)
-		f_movies = np.loadtxt(open("Data/movies"+args.file+".txt", "r"), dtype=np.float32)
+		np.save("ratings.npy",f_ratings)
+		f_movies = np.loadtxt(open("movies.txt", "r"), dtype=np.float32)
 		print("Got movies... ", end=""); sys.stdout.flush()
-		np.save("Data/movies"+args.file+".npy",f_movies)
+		np.save("movies.npy",f_movies)
 
-	ratings['R'] = sp.coo_matrix((f_ratings, (f_users, f_movies)), dtype=np.float32)
-
+	R=sp.coo_matrix((f_ratings, (f_users, f_movies)), dtype=np.float32);R=sp.csc_matrix(R)
+	R = sp.coo_matrix((f_ratings, (f_users, f_movies)), dtype=np.float32)
+	R=sp.csc_matrix(R);
+	R=R[:,np.diff(R.indptr)>0];
+	print("number of columns "+str(R.indptr.size-1))
+	R=sp.csr_matrix(R)
+	R = R[np.diff(R.indptr)>1]
+	R=sp.csr_matrix(R)
+	print("number of rows "+str(R.indptr.size-1))
 	print("Got R.")
 else:
 	# Generate R to a given sparsity
@@ -105,8 +110,6 @@ else:
 	noise = np.random.randn(1000,100).dot(Rvar)
 	ratings['R'] = BLC.init_R(B.p1, B.n, B.m, B.d, 0.1, noise)
 	B.test_ratio = 0.1
-
-	# user weighted least squares ...
 	B.walsqr = True
 
 	# Add noise
@@ -122,9 +125,6 @@ else:
 
 B.p1 = 16
 B.walsqr = True
-# full netflix values ...
-#B.d=20
-#B.p1=128
 ratings,original_rows,original_columns = BLC.prepare_R(ratings)
 print("R Density: %.5f, ratings: %d, users: %d, items: %d, features: %d, nyms: %d" % (ratings['R'].nnz/ratings['R'].shape[0]/ratings['R'].shape[1], ratings['R'].nnz, ratings['R'].shape[0], ratings['R'].shape[1], B.d, B.p0))
 if B.test_ratio>0:
