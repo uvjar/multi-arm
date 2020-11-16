@@ -7,7 +7,7 @@ import numpy as np
 
 def main():
     parser = argparse.ArgumentParser(description='get user, url and rating file')
-    parser.add_argument("--input_file", help="input_file. three_month.tar.gz or one_week.tar.gz", default='../dataset/three_month.tar.gz')
+    parser.add_argument("--input_file", help="input_file. three_month.tar.gz or one_week.tar.gz", default='../three_month.tar.gz')
     parser.add_argument("--output_path", help='output directory', default='data')
     parser.add_argument("--userSet_path", help='userSet.pkl directory', default='subUserSet.pkl')
     args = parser.parse_args()
