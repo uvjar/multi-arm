@@ -165,6 +165,52 @@ class BLC:
 
 		return V
 
+
+	# Print analysis of nyms with number of users and average rating error
+	def nym_cm(self, P, Utilde, V, R):
+		p = P.shape[0]
+		R = R.tocsr() # essential, or nifty code below fails since tR.indices is row not column indices.  DL
+		P = P.tocsr()
+		cm_round = np.zeros((5,5) ,dtype=int)
+
+		for i in range(p):
+			tP = P[i, :]
+			if tP.nnz == 0:
+				continue
+
+			tR = R[tP.indices, :]
+			temp=Utilde[:, i].transpose().dot(V)[tR.indices]
+
+			temp2=np.round(temp)
+			temp2[temp2>=12]=20; temp2[temp2<1]=1;temp2[np.array([temp2>4,temp2<12]).all(axis =0)]=4
+			
+			for i in range(temp2.shape[0]):
+				r= 4 if int(tR.data[i])-1 >4 else int(tR.data[i])-1
+				c=4 if int(temp2[i])-1 >4 else int(temp2[i])-1
+				cm_round[r,c]+=1
+
+
+		return cm_round
+
+	def print_pred(self, P, Utilde, V, R):
+		p = P.shape[0]
+		R = R.tocsr() # essential, or nifty code below fails since tR.indices is row not column indices.  DL
+		P = P.tocsr()
+		cm_round = np.zeros((5,5) ,dtype=int)
+
+		for i in range(p):
+			tP = P[i, :]
+			if tP.nnz == 0:
+				continue
+
+			tR = R[tP.indices, :]
+			temp=Utilde[:, i].transpose().dot(V)[tR.indices]
+			diff=tR.data-temp
+			print(tR.data[diff>1]);print(temp[diff>1])			
+		return 
+
+
+
 	# Print analysis of nyms with number of users and average rating error
 	def nym_errors(self, P, Utilde, V, R):
 		p = P.shape[0]
@@ -193,8 +239,8 @@ class BLC:
 
 			Pcount = P.indptr[1:].copy(); Pcount[1:] -= Pcount[:-1].copy()
 
-			for i in range(P.shape[0]):
-				print("%d (%.3f), " % (Pcount[i], nym_err[i]/nym_distrib[i]), end='')
+			# for i in range(P.shape[0]):
+			# 	print("%d (%.3f), " % (Pcount[i], nym_err[i]/nym_distrib[i]), end='')
 
 			print("Total error: %.3f." % (nym_err.sum()/Rnnz))
 
@@ -390,10 +436,19 @@ class BLC:
 				itt += 1
 
 			# Analyse nyms
+			print("run result")
 			P = P.tocsr() # Best format for nym_analysis
 			nym_err, nym_distrib = self.nym_errors(P, Utilde, V, R)
 			err = self.print_nym_analysis(P, R.nnz, nym_err, nym_distrib)
 			nym_mean_err = nym_err/nym_distrib
+
+			######################
+			print("run base line")
+			P_base=sp.coo_matrix((np.ones(P.shape[1]), (np.zeros(P.shape[1]), range(P.shape[1]))), shape=P.shape).tocsr()
+			nym_err_base, nym_distrib_base = self.nym_errors(P_base, Utilde, V, R)
+			err_base = self.print_nym_analysis(P_base, R.nnz, nym_err_base, nym_distrib_base)
+			##########################
+			
 			self.vprint("Main-loop time: %.3f\n" % (timer() - mainloop_time),"")
 			mainloop_time = timer()
 
@@ -425,10 +480,15 @@ class BLC:
 						"")
 
 		Rvar = self.variance(P,R)
-		np.savetxt("Rvar.dat",Rvar.toarray())
+
+
+		np.savetxt("Rvar.dat",Rvar.toarray())		
 		self.vprint("Total time taken: %.3f\n\n" % (timer() - big_tic),"")
 		self.cleanup()
-		return Utilde, V, err, P
+
+		cm_round=self.nym_cm(P, Utilde, V, R)
+
+		return Utilde, V, err, P,cm_round
 
 	def run_MF(self, ratings, verbose=1):
 		# carry out regular matrix factorisation i.e R as U^T V
