@@ -15,7 +15,7 @@ import pandas as pd
 with open("urlSet.pkl",'rb') as f:
     urlSet = pickle.load(f)
     urlSet=list(urlSet)
-print('urlS loaded, '+str(len(urlS))+' subscribed url in total')
+print('urlS loaded, '+str(len(urlSet))+' subscribed url in total')
 
 
 def save_dict(di_, filename_):
