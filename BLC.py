@@ -166,32 +166,6 @@ class BLC:
 		return V
 
 
-	# Print analysis of nyms with number of users and average rating error
-	def nym_cm(self, P, Utilde, V, R):
-		p = P.shape[0]
-		R = R.tocsr() # essential, or nifty code below fails since tR.indices is row not column indices.  DL
-		P = P.tocsr()
-		cm_round = np.zeros((5,5) ,dtype=int)
-
-		for i in range(p):
-			tP = P[i, :]
-			if tP.nnz == 0:
-				continue
-
-			tR = R[tP.indices, :]
-			temp=Utilde[:, i].transpose().dot(V)[tR.indices]
-
-			temp2=np.round(temp)
-			temp2[temp2>=12]=20; temp2[temp2<1]=1;temp2[np.array([temp2>4,temp2<12]).all(axis =0)]=4
-			
-			for i in range(temp2.shape[0]):
-				r= 4 if int(tR.data[i])-1 >4 else int(tR.data[i])-1
-				c=4 if int(temp2[i])-1 >4 else int(temp2[i])-1
-				cm_round[r,c]+=1
-
-
-		return cm_round
-
 	def print_pred(self, P, Utilde, V, R):
 		p = P.shape[0]
 		R = R.tocsr() # essential, or nifty code below fails since tR.indices is row not column indices.  DL
@@ -346,6 +320,31 @@ class BLC:
 
 		return None
 
+	def nym_cm(self, P, Utilde, V, R):
+		p = P.shape[0]
+		R = R.tocsr() # essential, or nifty code below fails since tR.indices is row not column indices.  DL
+		P = P.tocsr()
+		cm_round = np.zeros((3,3) ,dtype=int)
+
+		for i in range(p):
+			tP = P[i, :]
+			if tP.nnz == 0:
+				continue
+
+			tR = R[tP.indices, :]
+			temp=Utilde[:, i].transpose().dot(V)[tR.indices]
+
+			temp2=np.round(temp)
+			temp2[temp2<1]=1; 
+			temp2[temp2>3]=3
+
+			for i in range(temp2.shape[0]):
+				c=int(temp2[i])-1
+				r=int(tR.data[i])-1
+				cm_round[r,c]+=1
+		return cm_round
+
+
 	def run_BLC(self, ratings, verbose=1):
 		# carry out BLC factorisation i.e. R = P^T Utilde^T V
 		big_tic = timer()
@@ -486,9 +485,8 @@ class BLC:
 		self.vprint("Total time taken: %.3f\n\n" % (timer() - big_tic),"")
 		self.cleanup()
 
-		cm_round=self.nym_cm(P, Utilde, V, R)
 
-		return Utilde, V, err, P,cm_round
+		return Utilde, V, err, P
 
 	def run_MF(self, ratings, verbose=1):
 		# carry out regular matrix factorisation i.e R as U^T V
