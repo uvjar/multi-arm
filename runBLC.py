@@ -13,6 +13,17 @@ import BLC
 import pandas as pd
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-mu", dest="min_user", type=int)
+parser.add_argument("-mi", dest="min_item", type=int)
+parser.add_argument("-p", dest="num_nym", type=int,default=16)
+parser.add_argument("-i", dest="num_test", type=int,default=16)
+args = parser.parse_args()
+
+print("running test"+str(args.num_test))
+print("max p = "+str(args.num_nym))
+
+
 path='filtered_data/'
 
 suffix = ""
@@ -42,7 +53,7 @@ else:
 f_nratings=f_ratings/f_counts
 
 
-min_user=8; min_item=2
+min_user=args.min_user; min_item=args.min_item
 cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
 R = cooR.tocsc();
 
@@ -62,7 +73,7 @@ print(R.shape)
 
 
 data=R.data
-bins=[0.0, 0.13, 0.33];
+bins=[0.0, 0.15, 0.33];
 bins.append(max(data)+1)
 print(bins)
 cats = pd.cut(data,bins, right=False) 
@@ -80,7 +91,7 @@ ratings={}
 ratings['R'] = R
 import BLC
 B = BLC.BLC_GPU()
-B.p1 = 16
+B.p1 = args.num_nym
 B.test_ratio=0;
 
 
@@ -99,10 +110,10 @@ else:
 	Utilde, V, err, P = B.run_BLC(ratings)
 	err2 = None
 
-sp.save_npz(path+'test2/matrix_P_nym16.npz', P)
-np.save(path+"test2/matrix_Utilde_nym16.npy", Utilde)
-np.save(path+"test2/matrix_V_nym16.npy", V)
-sp.save_npz(path+"test2/filtered_rm.npz", R)
+sp.save_npz(path+'test'+str(args.num_test)+'/matrix_P_nym16.npz', P)
+np.save(path+"test"+str(args.num_test)+"/matrix_Utilde_nym16.npy", Utilde)
+np.save(path+"test"+str(args.num_test)+"/matrix_V_nym16.npy", V)
+sp.save_npz(path+"test"+str(args.num_test)+"/filtered_rm.npz", R)
 
 def nym_cm(P, Utilde, V, R):
 	p = P.shape[0]
