@@ -62,7 +62,7 @@ print(R.shape)
 
 
 data=R.data
-bins=[0.0, 0.15, 0.33];
+bins=[0.0, 0.14, 0.33];
 bins.append(max(data)+1)
 print(bins)
 cats = pd.cut(data,bins, right=False) 
