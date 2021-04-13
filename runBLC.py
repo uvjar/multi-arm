@@ -142,16 +142,27 @@ def nym_cm(P, Utilde, V, R):
 
 cm_round=nym_cm(P, Utilde, V, R)
 
+
+
+
 acc2=[0,0,0]
 for i in [0,1,2]:
     acc2[i]=cm_round[i,i]/cm_round.sum(axis=1)[i]
-print(acc2)
-print(cm_round)
 
 correctsum = 0
 for i in range(3):
     correctsum +=cm_round[i,i]
+
+print(acc2)
+print(cm_round)
 print(cm_round.sum())
 print(correctsum/cm_round.sum())
 
+with open(path+'test'+str(args.num_test)+'/result.txt','w') as file:
+	file.write(str(acc2)+'\n')
+	file.write("confusion matrix:"+'\n')
+	file.write(str(cm_round)+'\n')
+	file.write(str(cm_round.sum())+'\n')
+	file.write("overall accuracy:"+'\n')
+	file.write(str(correctsum/cm_round.sum())+'\n')
 
