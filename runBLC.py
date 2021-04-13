@@ -62,7 +62,7 @@ print(R.shape)
 
 
 data=R.data
-bins=[0.0, 0.15, 0.33];
+bins=[0.0, 0.13, 0.33];
 bins.append(max(data)+1)
 print(bins)
 cats = pd.cut(data,bins, right=False) 
@@ -99,10 +99,10 @@ else:
 	Utilde, V, err, P = B.run_BLC(ratings)
 	err2 = None
 
-sp.save_npz(path+'test1/matrix_P_nym16.npz', P)
-np.save(path+"test1/matrix_Utilde_nym16.npy", Utilde)
-np.save(path+"test1/matrix_V_nym16.npy", V)
-sp.save_npz(path+"test1/filtered_rm.npz", R)
+sp.save_npz(path+'test2/matrix_P_nym16.npz', P)
+np.save(path+"test2/matrix_Utilde_nym16.npy", Utilde)
+np.save(path+"test2/matrix_V_nym16.npy", V)
+sp.save_npz(path+"test2/filtered_rm.npz", R)
 
 def nym_cm(P, Utilde, V, R):
 	p = P.shape[0]
