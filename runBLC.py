@@ -104,7 +104,7 @@ np.save(path+"test1/matrix_Utilde_nym16.npy", Utilde)
 np.save(path+"test1/matrix_V_nym16.npy", V)
 sp.save_npz(path+"test1/filtered_rm.npz", R)
 
-def nym_cm(self, P, Utilde, V, R):
+def nym_cm(P, Utilde, V, R):
 	p = P.shape[0]
 	R = R.tocsr() 
 	P = P.tocsr()
