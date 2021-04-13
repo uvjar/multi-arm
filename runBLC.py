@@ -110,10 +110,10 @@ else:
 	Utilde, V, err, P = B.run_BLC(ratings)
 	err2 = None
 
-sp.save_npz(path+'test'+str(args.num_test)+'/matrix_P_nym16.npz', P)
-np.save(path+"test"+str(args.num_test)+"/matrix_Utilde_nym16.npy", Utilde)
-np.save(path+"test"+str(args.num_test)+"/matrix_V_nym16.npy", V)
-sp.save_npz(path+"test"+str(args.num_test)+"/filtered_rm.npz", R)
+# sp.save_npz(path+'test'+str(args.num_test)+'/matrix_P_nym16.npz', P)
+# np.save(path+"test"+str(args.num_test)+"/matrix_Utilde_nym16.npy", Utilde)
+# np.save(path+"test"+str(args.num_test)+"/matrix_V_nym16.npy", V)
+# sp.save_npz(path+"test"+str(args.num_test)+"/filtered_rm.npz", R)
 
 def nym_cm(P, Utilde, V, R):
 	p = P.shape[0]
@@ -158,7 +158,7 @@ print(cm_round)
 print(cm_round.sum())
 print(correctsum/cm_round.sum())
 
-with open(path+'test'+str(args.num_test)+'/result.txt','w') as file:
+with open(path+'test'+str(args.num_test)+'_result.txt','w') as file:
 	file.write(str(acc2)+'\n')
 	file.write("confusion matrix:"+'\n')
 	file.write(str(cm_round)+'\n')
