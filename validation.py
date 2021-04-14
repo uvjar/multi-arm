@@ -111,9 +111,13 @@ if B.test_ratio>0:
 	print("Prediction RMSE: %f" % (err2))
 	logging.info("Prediction RMSE: %f" % (err2))
 
+	acc2=[0,0,0]
+	for i in [0,1,2]:
+	    acc2[i]=cm_round[i,i]/cm_round.sum(axis=1)[i]
+
 	correctsum = 0
 	for i in range(3):
-		correctsum +=cm_round[i,i]
+	    correctsum +=cm_round[i,i]
 
 	print(acc2)
 	print(cm_round)
