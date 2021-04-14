@@ -12,6 +12,7 @@ import scipy.sparse as sp
 import BLC
 import pandas as pd
 from sklearn.model_selection import KFold
+thresh=3
 kf = KFold(n_splits=10, random_state=None, shuffle=True)
 
 # load rating matrix
