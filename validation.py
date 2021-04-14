@@ -13,6 +13,17 @@ import BLC
 import pandas as pd
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-mu", dest="min_user", type=int)
+parser.add_argument("-mi", dest="min_item", type=int)
+parser.add_argument("-p", dest="num_nym", type=int,default=16)
+parser.add_argument("-i", dest="num_test", type=int,default=16)
+args = parser.parse_args()
+
+print("running test"+str(args.num_test))
+print("max p = "+str(args.num_nym))
+
+
 path='filtered_data/'
 
 suffix = ""
@@ -42,7 +53,7 @@ else:
 f_nratings=f_ratings/f_counts
 
 
-min_user=8; min_item=2
+min_user=args.min_user; min_item=args.min_item
 cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
 R = cooR.tocsc();
 
@@ -62,7 +73,7 @@ print(R.shape)
 
 
 data=R.data
-bins=[0.0, 0.13, 0.33];
+bins=[0.0, 0.15, 0.33];
 bins.append(max(data)+1)
 print(bins)
 cats = pd.cut(data,bins, right=False) 
@@ -73,4 +84,79 @@ print("Class three percentage ",cats.codes[cats.codes==2].size/cats.codes.size)
 
 quan_data_5 = cats.codes+1
 print(set(quan_data_5)) 
+R.data=quan_data_5
+
+
+ratings={}
+ratings['R'] = R
+import BLC
+B = BLC.BLC_GPU()
+B.p1 = args.num_nym
+B.test_ratio=0.1;
+
+
+
+if B.test_ratio>0:
+	train, test = B.split(ratings,B.test_ratio,seed=B.seed)
+	print("Training Density: %.5f, ratings: %d, users: %d, items: %d, features: %d, nyms: %d" % (train['R'].nnz/train['R'].shape[0]/train['R'].shape[1], train['R'].nnz, train['R'].shape[0], train['R'].shape[1], B.d, B.p0))
+	Utilde, V, err, P = B.run_BLC(train)
+	err2 = B.validation(test, Utilde, V, P=P)
+	print("Factorisation RMSE: %f" % (np.sqrt(err)))
+	logging.info("Factorisation RMSE: %f" % (np.sqrt(err)))
+	print("Prediction RMSE: %f" % (err2))
+	logging.info("Prediction RMSE: %f" % (err2))
+else:
+	Utilde, V, err, P = B.run_BLC(ratings)
+	err2 = None
+
+def nym_cm(P, Utilde, V, R):
+	p = P.shape[0]
+	R = R.tocsr() 
+	P = P.tocsr()
+	cm_round = np.zeros((3,3) ,dtype=int)
+
+	for i in range(p):
+		tP = P[i, :]
+		if tP.nnz == 0:
+			continue
+
+		tR = R[tP.indices, :]
+		temp=Utilde[:, i].transpose().dot(V)[tR.indices]
+
+		temp2=np.round(temp)
+		temp2[temp2<1]=1; 
+		temp2[temp2>3]=3
+
+		for i in range(temp2.shape[0]):
+			c=int(temp2[i])-1
+			r=int(tR.data[i])-1
+			cm_round[r,c]+=1
+	return cm_round
+
+
+cm_round=nym_cm(P, Utilde, V, R)
+
+
+
+
+acc2=[0,0,0]
+for i in [0,1,2]:
+    acc2[i]=cm_round[i,i]/cm_round.sum(axis=1)[i]
+
+correctsum = 0
+for i in range(3):
+    correctsum +=cm_round[i,i]
+
+print(acc2)
+print(cm_round)
+print(cm_round.sum())
+print(correctsum/cm_round.sum())
+
+with open(path+'test'+str(args.num_test)+'_result.txt','w') as file:
+	file.write(str(acc2)+'\n')
+	file.write("confusion matrix:"+'\n')
+	file.write(str(cm_round)+'\n')
+	file.write(str(cm_round.sum())+'\n')
+	file.write("overall accuracy:"+'\n')
+	file.write(str(correctsum/cm_round.sum())+'\n')
 

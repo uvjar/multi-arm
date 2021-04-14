@@ -697,7 +697,7 @@ class BLC_GPU(BLC_CPU):
 	def messup(self):
 		BLC_CPU.messup(self)
 
-		self.ctx = cl.create_some_context()
+		self.ctx = cl.create_some_context(interactive=False)
 		self.queue = cl.CommandQueue(self.ctx)
 		self.prg = cl.Program(self.ctx, self.cl_recalc_P()).build()
 		self.P_GPU = self.prg.recalc_P
