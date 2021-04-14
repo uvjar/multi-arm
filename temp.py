@@ -31,7 +31,7 @@ train, test = B.split(ratings,B.test_ratio,seed=B.seed)
 
 
 err2,cm_round= B.validation(test, Utilde, V, P=P)
-print("Factorisation RMSE: %f" % (np.sqrt(err)))
+
 print("Prediction RMSE: %f" % (err2))
 acc2=[0,0,0]
 for i in [0,1,2]:
