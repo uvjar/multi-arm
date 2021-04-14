@@ -13,7 +13,7 @@ import BLC
 import pandas as pd
 
 B = BLC.BLC_GPU()
-B.p1 = args.num_nym
+B.p1 = 16
 B.test_ratio=0.1;
 
 
