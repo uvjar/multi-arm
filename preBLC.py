@@ -73,4 +73,5 @@ print("Class three percentage ",cats.codes[cats.codes==2].size/cats.codes.size)
 
 quan_data_5 = cats.codes+1
 print(set(quan_data_5)) 
+R.data=quan_data_5
 sp.save_npz("filtered_rm_mu8_mi2.npz", R)
