@@ -435,14 +435,14 @@ class BLC:
 				itt += 1
 
 			# Analyse nyms
-			print("run result")
+			# print("run result")
 			P = P.tocsr() # Best format for nym_analysis
 			nym_err, nym_distrib = self.nym_errors(P, Utilde, V, R)
 			err = self.print_nym_analysis(P, R.nnz, nym_err, nym_distrib)
 			nym_mean_err = nym_err/nym_distrib
 
 			######################
-			print("run base line")
+			# print("run base line")
 			P_base=sp.coo_matrix((np.ones(P.shape[1]), (np.zeros(P.shape[1]), range(P.shape[1]))), shape=P.shape).tocsr()
 			nym_err_base, nym_distrib_base = self.nym_errors(P_base, Utilde, V, R)
 			err_base = self.print_nym_analysis(P_base, R.nnz, nym_err_base, nym_distrib_base)
