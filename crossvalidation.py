@@ -20,13 +20,7 @@ R = sp.load_npz("filtered_rm_mu8_mi2.npz")
 with open('cv_result_p.txt','w') as file:
 	file.write("cross validation on p\n")
 
-
-
 import BLC
-
-
-
-
 
 R = R.tocsr() # make sure R is in csr format
 shap=R.shape
@@ -76,6 +70,8 @@ for candidate_p in [4,8,16,32,64]:
 		correctsum = 0
 		for i in range(3):
 		    correctsum +=cm_round[i,i]
+		print("overall accuracy:"+str(correctsum/cm_round.sum()))
+
 
 		with open('cv_result_p.txt','a') as file:
 			file.write("p="+str(candidate_p)+" round="+str(atWhichFold)+"\n")
