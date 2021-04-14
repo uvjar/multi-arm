@@ -27,8 +27,8 @@ shap=R.shape
 R_users=R.nonzero()[0]
 R_items = R.nonzero()[1]
 for candidate_p in [4,8,16,32,64]:
-	print("running candidate "+ str(candidate_p))
-	atWhichFold=0
+    print("running candidate "+ str(candidate_p))
+    atWhichFold=0
     for train, test in kf.split(test_idx):
         test_idx=test
         test_R = sp.coo_matrix((R.data[test_idx], (R_users[test_idx], R_items[test_idx])),shape=shap)
@@ -59,28 +59,28 @@ for candidate_p in [4,8,16,32,64]:
         print("Training Density: %.5f, ratings: %d, users: %d, items: %d, features: %d, nyms: %d" % (train['R'].nnz/train['R'].shape[0]/train['R'].shape[1], train['R'].nnz, train['R'].shape[0], train['R'].shape[1], B.d, B.p0))
         
         B = BLC.BLC_GPU()
-		B.p1 = candidate_p
+        B.p1 = candidate_p
         Utilde, V, err, P = B.run_BLC(train,verbose=0)
         err2,cm_round= B.validation(test, Utilde, V, P=P)
         print("Prediction RMSE: %f" % (err2))
 
         acc2=[0,0,0]
-		for i in [0,1,2]:
-		    acc2[i]=cm_round[i,i]/cm_round.sum(axis=1)[i]
-		correctsum = 0
-		for i in range(3):
-		    correctsum +=cm_round[i,i]
-		print("overall accuracy:"+str(correctsum/cm_round.sum()))
+        for i in [0,1,2]:
+            acc2[i]=cm_round[i,i]/cm_round.sum(axis=1)[i]
+        correctsum = 0
+        for i in range(3):
+            correctsum +=cm_round[i,i]
+        print("overall accuracy:"+str(correctsum/cm_round.sum()))
 
 
-		with open('cv_result_p.txt','a') as file:
-			file.write("p="+str(candidate_p)+" round="+str(atWhichFold)+"\n")
-			file.write(str(acc2)+'\n')
-			file.write("confusion matrix:"+'\n')
-			file.write(str(cm_round)+'\n')
-			file.write(str(cm_round.sum())+'\n')
-			file.write("overall accuracy:"+'\n')
-			file.write(str(correctsum/cm_round.sum())+'\n')
-			file.write("Prediction RMSE: " + str(err2))
-		atWhichFold+=1
+        with open('cv_result_p.txt','a') as file:
+            file.write("p="+str(candidate_p)+" round="+str(atWhichFold)+"\n")
+            file.write(str(acc2)+'\n')
+            file.write("confusion matrix:"+'\n')
+            file.write(str(cm_round)+'\n')
+            file.write(str(cm_round.sum())+'\n')
+            file.write("overall accuracy:"+'\n')
+            file.write(str(correctsum/cm_round.sum())+'\n')
+            file.write("Prediction RMSE: " + str(err2))
+        atWhichFold+=1
     
