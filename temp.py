@@ -12,10 +12,6 @@ import scipy.sparse as sp
 import BLC
 import pandas as pd
 
-B = BLC.BLC_GPU()
-B.p1 = 16
-B.test_ratio=0.1;
-train, test = B.split(ratings,B.test_ratio,seed=B.seed)
 
 
 path='filtered_data/'
@@ -23,6 +19,17 @@ V = np.load("tempV.npy")
 P = sp.load_npz('tempP.npz')
 R = sp.load_npz("tempR.npz")
 Utilde = np.load("tempU.npy")
+
+
+ratings={}
+ratings['R'] = R
+
+B = BLC.BLC_GPU()
+B.p1 = 16
+B.test_ratio=0.1;
+train, test = B.split(ratings,B.test_ratio,seed=B.seed)
+
+
 err2,cm_round= B.validation(test, Utilde, V, P=P)
 print("Factorisation RMSE: %f" % (np.sqrt(err)))
 print("Prediction RMSE: %f" % (err2))
