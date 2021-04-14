@@ -15,6 +15,7 @@ import pandas as pd
 B = BLC.BLC_GPU()
 B.p1 = 16
 B.test_ratio=0.1;
+train, test = B.split(ratings,B.test_ratio,seed=B.seed)
 
 
 path='filtered_data/'
