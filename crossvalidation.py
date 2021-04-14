@@ -51,7 +51,7 @@ for candidate_p in [4,8,16,32,64]:
         for i in too_few:
             test_R.data[test_R.indptr[i]:test_R.indptr[i + 1]] = 0
         test_R.eliminate_zeros()
-        self.vprint("Removed %d rows from test_R due to too few training samples.\n"%too_few.size,"")
+        print("Removed "+str(too_few.size)+" rows from test_R due to too few training samples")
 
         train = {}
         train['R'] = train_R
