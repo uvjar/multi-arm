@@ -100,11 +100,26 @@ if B.test_ratio>0:
 	train, test = B.split(ratings,B.test_ratio,seed=B.seed)
 	print("Training Density: %.5f, ratings: %d, users: %d, items: %d, features: %d, nyms: %d" % (train['R'].nnz/train['R'].shape[0]/train['R'].shape[1], train['R'].nnz, train['R'].shape[0], train['R'].shape[1], B.d, B.p0))
 	Utilde, V, err, P = B.run_BLC(train)
-	err2 = B.validation(test, Utilde, V, P=P)
+	sp.save_npz('tempP.npz', P)
+	np.save("tempU.npy", Utilde)
+	np.save("tempV.npy", V)
+	sp.save_npz("tempR.npz", R)
+
+	err2,cm_round= B.validation(test, Utilde, V, P=P)
 	print("Factorisation RMSE: %f" % (np.sqrt(err)))
 	logging.info("Factorisation RMSE: %f" % (np.sqrt(err)))
 	print("Prediction RMSE: %f" % (err2))
 	logging.info("Prediction RMSE: %f" % (err2))
+
+	correctsum = 0
+	for i in range(3):
+		correctsum +=cm_round[i,i]
+
+	print(acc2)
+	print(cm_round)
+	print(cm_round.sum())
+	print(correctsum/cm_round.sum())
+
 else:
 	Utilde, V, err, P = B.run_BLC(ratings)
 	err2 = None

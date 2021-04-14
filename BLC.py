@@ -531,6 +531,7 @@ class BLC:
 			P = P.tocsr()
 
 		err = 0
+		cm_round = np.zeros((3,3) ,dtype=int)
 		for g in range(p):
 			tP = P[g, :]
 			test_idx = test_R.nonzero()
@@ -547,7 +548,18 @@ class BLC:
 			if self.round:
 				pred = np.rint(pred)
 			err += np.square(test_R.data[test_users_in_nym]-pred).sum()
-		return np.sqrt(err/test_R.nnz)
+
+			# confusion matrix
+			temp1=test_R.data[test_users_in_nym]
+			temp2=np.round(pred)
+			temp2[temp2<1]=1; 
+			temp2[temp2>3]=3
+			for i in range(temp2.shape[0]):
+				c=int(temp2[i])-1 # pridicted label
+				r=int(temp1[i])-1 # true label
+				cm_round[r,c]+=1
+
+		return np.sqrt(err/test_R.nnz),cm_round
 
 	def naive(self, ratings, test):
 		R = ratings['R']
