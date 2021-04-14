@@ -53,15 +53,12 @@ for candidate_p in [4,8,16,32,64]:
         test_R.eliminate_zeros()
         print("Removed "+str(too_few.size)+" rows from test_R due to too few training samples")
 
-        train = {}
-        train['R'] = train_R
-
-        test = {}
-        test['R'] = test_R
-        print("Training Density: %.5f, ratings: %d, users: %d, items: %d, features: %d, nyms: %d" % (train['R'].nnz/train['R'].shape[0]/train['R'].shape[1], train['R'].nnz, train['R'].shape[0], train['R'].shape[1], B.d, B.p0))
-        
+        train = {};train['R'] = train_R
+        test = {};test['R'] = test_R
         B = BLC.BLC_GPU()
         B.p1 = candidate_p
+        print("Training Density: %.5f, ratings: %d, users: %d, items: %d, features: %d, nyms: %d" % (train['R'].nnz/train['R'].shape[0]/train['R'].shape[1], train['R'].nnz, train['R'].shape[0], train['R'].shape[1], B.d, B.p0))
+        
         Utilde, V, err, P = B.run_BLC(train,verbose=0)
         err2,cm_round= B.validation(test, Utilde, V, P=P)
         print("Prediction RMSE: %f" % (err2))
