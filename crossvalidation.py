@@ -36,6 +36,7 @@ for candidate_p in [4,8,16,32,64]:
         test_R.sort_indices()
         
         train_data = np.delete(R.data, test_idx)
+        train_users = np.delete(R_users, test_idx)
         train_items = np.delete(R_items, test_idx)
         train_R = sp.coo_matrix((train_data, (train_users, train_items)),shape=shap)
         train_R = train_R.tocsr()
