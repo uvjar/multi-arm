@@ -12,6 +12,10 @@ import scipy.sparse as sp
 import BLC
 import pandas as pd
 
+B = BLC.BLC_GPU()
+B.p1 = args.num_nym
+B.test_ratio=0.1;
+
 
 path='filtered_data/'
 V = np.load("tempV.npy")
