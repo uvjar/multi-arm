@@ -29,7 +29,7 @@ R_items = R.nonzero()[1]
 for candidate_p in [4,8,16,32,64]:
     print("running candidate "+ str(candidate_p))
     atWhichFold=0
-    for train, test in kf.split(test_idx):
+    for train, test in kf.split(range(R.nnz)):
         test_idx=test
         test_R = sp.coo_matrix((R.data[test_idx], (R_users[test_idx], R_items[test_idx])),shape=shap)
         test_R = test_R.tocsr()
