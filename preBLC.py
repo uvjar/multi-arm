@@ -40,7 +40,7 @@ else:
     np.save(path+"items"+suffix+".npy",f_items)
 
 f_nratings=f_ratings/f_counts
-if userlog:
+if uselog:
     import math
     f_nratings=math.log(f_nratings)
     # f_nratings -= (min(f_nratings)+0.1)
