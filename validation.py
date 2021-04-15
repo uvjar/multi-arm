@@ -56,6 +56,10 @@ if uselog:
 
     nratings=f_nratings[idx]
     print(min(nratings))
+    print(min(f_nratings))
+    print(nratings.size)
+    print(f_nratings.size)
+    print("=-=---------------------")
     items=f_items[idx]
     users=f_users[idx]
 
