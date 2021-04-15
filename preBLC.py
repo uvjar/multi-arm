@@ -43,6 +43,7 @@ f_nratings=f_ratings/f_counts
 if userlog:
     import math
     f_nratings=math.log(f_nratings)
+    f_nratings -=min(f_nratings)
 
     min_user=8; min_item=2
     cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
@@ -61,7 +62,7 @@ if userlog:
     print("number of rows(items): "+str(R.indptr.size-1))
     print("Got R.")
     print(R.shape)
-
+    print(R.data)
     sp.save_npz("log_rm_mu8_mi2.npz", R)
 else:
 
