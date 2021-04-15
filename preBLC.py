@@ -12,7 +12,7 @@ import scipy.sparse as sp
 import BLC
 import pandas as pd
 
-
+uselog=True
 path='filtered_data/'
 
 suffix = ""
@@ -40,38 +40,61 @@ else:
     np.save(path+"items"+suffix+".npy",f_items)
 
 f_nratings=f_ratings/f_counts
+if userlog:
+    import math
+    f_nratings=math.log(f_nratings)
+
+    min_user=8; min_item=2
+    cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
+    R = cooR.tocsc();
+
+    print("Number of rating entries after merging: "+str(R.data.size))
+    print(R.shape)
+    print("Only keep users who has rated more than "+ str(min_user)+" items")
+    R = R[:,np.diff(R.indptr)>min_user];
+    print("number of columns(users): "+str(R.indptr.size-1))
+
+    print("Only keep items which has been rated more than "+ str(min_item)+" times")
+    print(R.shape)
+    R = sp.csr_matrix(R)
+    R = R[np.diff(R.indptr)>min_item]
+    print("number of rows(items): "+str(R.indptr.size-1))
+    print("Got R.")
+    print(R.shape)
+
+    sp.save_npz("log_rm_mu8_mi2.npz", R)
+else:
+
+    min_user=8; min_item=2
+    cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
+    R = cooR.tocsc();
+
+    print("Number of rating entries after merging: "+str(R.data.size))
+    print(R.shape)
+    print("Only keep users who has rated more than "+ str(min_user)+" items")
+    R = R[:,np.diff(R.indptr)>min_user];
+    print("number of columns(users): "+str(R.indptr.size-1))
+
+    print("Only keep items which has been rated more than "+ str(min_item)+" times")
+    print(R.shape)
+    R = sp.csr_matrix(R)
+    R = R[np.diff(R.indptr)>min_item]
+    print("number of rows(items): "+str(R.indptr.size-1))
+    print("Got R.")
+    print(R.shape)
 
 
-min_user=8; min_item=2
-cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
-R = cooR.tocsc();
+    data=R.data
+    bins=[0.0, 0.13, 0.33];
+    bins.append(max(data)+1)
+    print(bins)
+    cats = pd.cut(data,bins, right=False) 
+    print(cats.value_counts())
+    print("Class one percentage ",cats.codes[cats.codes==0].size/cats.codes.size)
+    print("Class two percentage ",cats.codes[cats.codes==1].size/cats.codes.size)
+    print("Class three percentage ",cats.codes[cats.codes==2].size/cats.codes.size)
 
-print("Number of rating entries after merging: "+str(R.data.size))
-print(R.shape)
-print("Only keep users who has rated more than "+ str(min_user)+" items")
-R = R[:,np.diff(R.indptr)>min_user];
-print("number of columns(users): "+str(R.indptr.size-1))
-
-print("Only keep items which has been rated more than "+ str(min_item)+" times")
-print(R.shape)
-R = sp.csr_matrix(R)
-R = R[np.diff(R.indptr)>min_item]
-print("number of rows(items): "+str(R.indptr.size-1))
-print("Got R.")
-print(R.shape)
-
-
-data=R.data
-bins=[0.0, 0.15, 0.33];
-bins.append(max(data)+1)
-print(bins)
-cats = pd.cut(data,bins, right=False) 
-print(cats.value_counts())
-print("Class one percentage ",cats.codes[cats.codes==0].size/cats.codes.size)
-print("Class two percentage ",cats.codes[cats.codes==1].size/cats.codes.size)
-print("Class three percentage ",cats.codes[cats.codes==2].size/cats.codes.size)
-
-quan_data_5 = cats.codes+1
-print(set(quan_data_5)) 
-R.data=quan_data_5
-sp.save_npz("filtered_rm_mu8_mi2.npz", R)
+    quan_data_5 = cats.codes+1
+    print(set(quan_data_5)) 
+    R.data=quan_data_5
+    sp.save_npz("filtered_rm_mu8_mi2.npz", R)
