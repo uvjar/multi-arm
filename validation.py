@@ -16,9 +16,9 @@ thresh=3
 kf = KFold(n_splits=10, random_state=None, shuffle=True)
 
 
-path='filtered_data/'
-R = sp.load_npz("filtered_rm_mu8_mi2.npz")
-with open('cv_result_p.txt','w') as file:
+
+R = sp.load_npz("log_rm_mu8_mi2.npz")
+with open('temp.txt','w') as file:
 	file.write("cross validation on p\n")
 
 ratings={}
@@ -59,7 +59,7 @@ if B.test_ratio>0:
 
 
 
-with open(path+'test'+str(args.num_test)+'_result.txt','w') as file:
+with open('temp.txt','a') as file:
 	file.write(str(acc2)+'\n')
 	file.write("confusion matrix:"+'\n')
 	file.write(str(cm_round)+'\n')

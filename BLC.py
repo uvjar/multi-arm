@@ -517,7 +517,7 @@ class BLC:
 		self.cleanup()
 		return U, V, err
 
-	def validation(self, test, Utilde, V, P=None):
+	def validation2(self, test, Utilde, V, P=None):
 		test_R = test['R'].tocsr() # make sure R is in csr format
 		p = Utilde.shape[1]
 		n = test_R.shape[0]
@@ -560,6 +560,41 @@ class BLC:
 				cm_round[r,c]+=1
 
 		return np.sqrt(err/test_R.nnz),cm_round
+
+	def validation(self, test, Utilde, V, P=None):
+		test_R = test['R'].tocsr() # make sure R is in csr format
+		p = Utilde.shape[1]
+		n = test_R.shape[0]
+
+		if P == None:
+			# assign users to nyms based on the test_R ratings
+			users = np.array(range(n))
+			new_nyms, toc2 = self.recalc_P(test_R, Utilde, V, users)
+			P=sp.csr_matrix((np.ones(n),(new_nyms,users)),shape=(p,n))
+		else:
+			P = P.tocsr()
+
+		err = 0
+		
+		for g in range(p):
+			tP = P[g, :]
+			test_idx = test_R.nonzero()
+			if tP.nnz == 0:
+				continue
+			users_in_nym = tP.indices
+			if users_in_nym.size == 0:
+				continue
+			test_users_in_nym = np.in1d(test_idx[0], users_in_nym) #boolean mask for test_idx[0]
+			test_columns = test_idx[1][test_users_in_nym]
+			pred = Utilde[:,g].transpose().dot(V[:,test_columns])
+			if self.clip:
+				pred = np.clip(pred,self.clip_min,self.clip_max)
+			if self.round:
+				pred = np.rint(pred)
+			err += np.square(test_R.data[test_users_in_nym]-pred).sum()
+
+		return np.sqrt(err/test_R.nnz)
+
 
 	def naive(self, ratings, test):
 		R = ratings['R']
