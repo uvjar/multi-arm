@@ -42,7 +42,8 @@ else:
 f_nratings=f_ratings/f_counts
 if uselog:
     import math
-    f_nratings=math.log(f_nratings)
+    for i in len(f_nratings):
+        f_nratings[i]=math.log(f_nratings[i])
     # f_nratings -= (min(f_nratings)+0.1)
 
     min_user=8; min_item=2
