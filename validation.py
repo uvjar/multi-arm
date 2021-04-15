@@ -55,6 +55,7 @@ if uselog:
         	idx.append(i)
 
     nratings=f_nratings[idx]
+    print(min(nratings))
     items=f_items[idx]
     users=f_users[idx]
 
