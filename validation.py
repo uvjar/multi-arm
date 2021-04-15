@@ -56,11 +56,12 @@ if uselog:
     f_nratings=f_nratings[idx]
     f_items=f_items[idx]
     f_users=f_users[idx]
-    
+
     bias=min(f_nratings)
     for i in range(len(f_nratings)):
         f_nratings[i]=f_nratings[i]-bias+0.1        
 
+    print(min(f_nratings))
     min_user=8; min_item=2
     cooR = sp.coo_matrix((f_nratings, (f_items,f_users)), dtype=np.float32);#, shape=(max(f_users)+1, max(f_items)+1)
 
