@@ -91,24 +91,11 @@ if B.test_ratio>0:
 	np.save("tempV.npy", V)
 	sp.save_npz("tempR.npz", R)
 
-	err2,cm_round= B.validation(test, Utilde, V, P=P)
+	err2= B.validation(test, Utilde, V, P=P)
 	print("Factorisation RMSE: %f" % (np.sqrt(err)))
 	logging.info("Factorisation RMSE: %f" % (np.sqrt(err)))
 	print("Prediction RMSE: %f" % (err2))
 	logging.info("Prediction RMSE: %f" % (err2))
-
-	acc2=[0,0,0]
-	for i in [0,1,2]:
-	    acc2[i]=cm_round[i,i]/cm_round.sum(axis=1)[i]
-
-	correctsum = 0
-	for i in range(3):
-	    correctsum +=cm_round[i,i]
-
-	print(acc2)
-	print(cm_round)
-	print(cm_round.sum())
-	print(correctsum/cm_round.sum())
 
 
 
