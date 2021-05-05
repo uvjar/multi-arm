@@ -109,6 +109,7 @@ if B.test_ratio>0:
 else:
 	Utilde, V, err, P = B.run_BLC(ratings)
 	err2 = None
+	sp.save_npz(str(args.num_nym)+'P.npz', P)
 
 # sp.save_npz(path+'test'+str(args.num_test)+'/matrix_P_nym16.npz', P)
 # np.save(path+"test"+str(args.num_test)+"/matrix_Utilde_nym16.npy", Utilde)
